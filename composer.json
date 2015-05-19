@@ -1,0 +1,26 @@
+{
+  "name": "nepster-web/yii2-module-robokassa",
+  "description": "Модуль для работы с платежной системой Robokassa",
+  "type": "yii2-extension",
+  "keywords": ["yii2", "yii 2", "robokassa"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nepster",
+      "email": "nepsterxxx@mail.ru"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/nepster-web/yii2-module-robokassa/issues",
+    "source": "https://github.com/nepster-web/yii2-module-robokassa"
+  },
+  "require": {
+    "yiisoft/yii2": "*",
+    "nepster-web/yii2-extensions-installer": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "nepster\\robokassa\\": ""
+    }
+  }
+}

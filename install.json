@@ -1,0 +1,11 @@
+{
+  "name": "perfectmoney",
+  "type": "module",
+  "copy": {
+    "@vendor/nepster-web/yii2-module-perfectmoney/demo": "@app/modules/merchant"
+  },
+  "settings": {
+    "Module namespace": "app\\modules\\merchant",
+    "Web controller": "yii\\web\\Controller"
+  }
+}
