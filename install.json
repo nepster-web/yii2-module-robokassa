@@ -1,8 +1,8 @@
 {
-  "name": "perfectmoney",
+  "name": "robokassa",
   "type": "module",
   "copy": {
-    "@vendor/nepster-web/yii2-module-perfectmoney/demo": "@app/modules/merchant"
+    "@vendor/nepster-web/yii2-module-robokassa/demo": "@app/modules/merchant"
   },
   "settings": {
     "Module namespace": "app\\modules\\merchant",
