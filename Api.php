@@ -11,6 +11,7 @@ use Yii;
 
 /**
  * Class Api
+ * @package nepster\robokassa
  */
 class Api extends \yii\base\Component
 {
@@ -22,7 +23,12 @@ class Api extends \yii\base\Component
     /**
      * @var string
      */
-    public $mrchPassword;
+    public $mrchPassword1;
+
+    /**
+     * @var string
+     */
+    public $mrchPassword2;
 
     /**
      * @var array
@@ -72,7 +78,7 @@ class Api extends \yii\base\Component
     public function payment($nOutSum, $nInvId, $sInvDesc = null, $sIncCurrLabel = null, $sEmail = null, $sCulture = null, $shp = [])
     {
         $url = $this->apiUrl;
-        $signature = "{$this->mrchLogin}:{$nOutSum}:{$nInvId}:{$this->mrchPassword}";
+        $signature = "{$this->mrchLogin}:{$nOutSum}:{$nInvId}:{$this->mrchPassword1}";
         if (!empty($shp)) {
             $signature .= ':' . $this->implodeShp($shp);
         }
