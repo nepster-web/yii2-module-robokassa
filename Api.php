@@ -79,9 +79,12 @@ class Api extends \yii\base\Component
     {
         $url = $this->apiUrl;
         $signature = "{$this->mrchLogin}:{$nOutSum}:{$nInvId}:{$this->mrchPassword1}";
+        /*
+        @note Exclude additional params from signature.
         if (!empty($shp)) {
             $signature .= ':' . $this->implodeShp($shp);
         }
+        */
         $sSignatureValue = md5($signature);
         $url .= '?' . http_build_query([
                 'MrchLogin' => $this->mrchLogin,
