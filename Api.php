@@ -46,10 +46,19 @@ class Api extends \yii\base\Component
     public $failureUrl;
 
     /**
+     * @var bool
+     */
+    public $isTest = false;
+
+    /**
      * @var string
      */
     private $apiUrl = 'https://auth.robokassa.ru/Merchant/Index.aspx';
 
+    /**
+     * @var string
+     */
+    private $apiServiceUrl = 'https://auth.robokassa.ru/Merchant/WebService/Service.asmx';
     /**
      * @inheritdoc
      */
@@ -79,12 +88,9 @@ class Api extends \yii\base\Component
     {
         $url = $this->apiUrl;
         $signature = "{$this->mrchLogin}:{$nOutSum}:{$nInvId}:{$this->mrchPassword1}";
-        /*
-        @note Exclude additional params from signature.
         if (!empty($shp)) {
             $signature .= ':' . $this->implodeShp($shp);
         }
-        */
         $sSignatureValue = md5($signature);
         $url .= '?' . http_build_query([
                 'MrchLogin' => $this->mrchLogin,
@@ -99,6 +105,11 @@ class Api extends \yii\base\Component
         if (!empty($shp) && ($query = http_build_query($shp)) !== '') {
             $url .= '&' . $query;
         }
+
+        if ($this->isTest) {
+            $url .= '&isTest=1';
+        }
+
         Yii::$app->user->setReturnUrl(Yii::$app->request->getUrl());
         return Yii::$app->response->redirect($url);
     }
@@ -133,5 +144,48 @@ class Api extends \yii\base\Component
             $shp[$key] = $key . '=' . $value;
         }
         return implode(':', $shp);
+    }
+
+    /**
+     * Получить доступные методы оплаты
+     * Генерирует специальный url адрес для получения методов оплаты и возвращает массив
+     *
+     * @param string $lang
+     * @return array
+     */
+    public function getPaymentSystemsList($sCulture = 'ru'): array
+    {
+        $url = $this->apiServiceUrl . '/GetCurrencies';
+
+        $url .= '?' . http_build_query([
+                'MerchantLogin' => $this->mrchLogin,
+                'Language' => $sCulture,
+            ]);
+
+        $items = [];
+
+        // Получаем данные о доступных платежных системах Robokassa
+        $xml_str = @file_get_contents($url, 0);
+
+        if (!empty($xml_str)) {
+            $movies = new \SimpleXMLElement($xml_str);
+            if (isset($movies->Groups->Group)) {
+                foreach ($movies->Groups->Group as $group) {
+                    if (isset($group->Items->Currency)) {
+                        foreach ($group->Items->Currency as $currency) {
+                            $items[(string)$currency->attributes()->Label] = [
+                                'label' => (string)$currency->attributes()->Label,
+                                'alias' => (string)$currency->attributes()->Alias,
+                                'name' => (string)$currency->attributes()->Name,
+                                'minValue' => isset($currency->attributes()->MinValue) ? (int)$currency->attributes()->MinValue : null,
+                                'maxValue' => isset($currency->attributes()->MaxValue) ? (int)$currency->attributes()->MaxValue : null,
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $items;
     }
 }
